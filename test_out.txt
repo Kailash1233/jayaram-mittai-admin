@@ -1,0 +1,540 @@
+▶ realistic inventory and transfer scenarios, seven roles, no attendance
+  ✖ store records yesterday purchase with optional total cost (11.7374ms)
+  ✖ purchase allows optional cost; invalid precision, negative or zero quantity and future date fail (14.1114ms)
+  ✖ separate production, cooking and custom uses with decimal quantities (6.3944ms)
+  ✖ custom purpose is required and disposal subtracts only its quantity (7.5918ms)
+  ✖ usage/spoilage cannot exceed stock or create negative past daily balance (20.8756ms)
+  ✔ store cannot edit/void purchase or enter opening/reconciliation (7.9017ms)
+  ✖ production receipt takes no cost and does not consume ingredients automatically (9.9537ms)
+  ✖ fixed units cannot change after movements (3.5418ms)
+  ✖ mixed shipment deducts each product exactly once (14.2248ms)
+  ✖ one overdrawn line rolls back the entire shipment (11.5412ms)
+  ✔ duplicate products and store backdating are rejected (6.8995ms)
+  ✔ origin cannot confirm its own dispatch (0.8531ms)
+  ✖ other three outlets cannot read or receive another outlet shipment (0.893ms)
+  ✔ destination sees products but not central stock or costs (4.8276ms)
+  ✔ unchecked full receipt requires actual, includes zero, forbids overreceipt (1.322ms)
+  ✖ mixed full/short/zero receipt confirms without central re-deduction (0.3918ms)
+  ✖ repeat confirmation is a no-op; changed saved receipt needs admin (0.6986ms)
+  ✖ outlet creates independent return without prior-delivery link (7.3899ms)
+  ✔ return cannot classify usable quantity greater than physically received (6.3281ms)
+  ✖ 5 sent, 4 arrived, 1.5 usable, 2.5 disposed: net stock increases 1.5 (6.6749ms)
+  ✖ all-disposal and zero-arrival returns leave available stock unchanged (11.953ms)
+  ✖ admin corrects received dispatch atomically while retaining original (0.9336ms)
+  ✖ admin cannot edit automatic ledger postings separately (0.5813ms)
+  ✖ voiding a corrected dispatch restores stock; repeated void does not duplicate (0.4616ms)
+  ✔ void usable return removes only its usable net quantity (5.7142ms)
+  ✔ admin reconciliation records difference, rejects missing reason and matching count (11.5214ms)
+  ✔ admin opening cost optional; duplicate active opening disallowed (5.7747ms)
+  ✔ deactivated products retain history but reject new movements/dispatches (4.7002ms)
+  ✔ unrelated direct table writes and anonymous reads denied (3.6775ms)
+✖ realistic inventory and transfer scenarios, seven roles, no attendance (2303.6378ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 11
+ℹ fail 19
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3430.121
+
+✖ failing tests:
+
+test at tests\inventory-transfers.test.ts:111:11
+✖ store records yesterday purchase with optional total cost (11.7374ms)
+  error: new row for relation "inventory_movements" violates check constraint "inventory_movement_cost"
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 1203,
+    severity: 'ERROR',
+    code: '23514',
+    detail: 'Failing row contains (ed375a57-5b62-4903-ae9f-f30c52f1e466, 554ddf87-168e-4a3b-b24a-c819f938c7f6, 10000000-0000-4000-8000-000000000010, purchase_received, 2026-09-20, 25.000, null, null, null, null, null, null, null, f, null, null, null, b1deb4c3-ab5f-4ad3-992d-3a94011cbda7, 2026-09-21 13:36:22.017+05, null).',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: `SQL statement "insert into public.inventory_movements (\n    product_id,location_id,movement_type,movement_date,quantity_change,total_cost,\n    usage_purpose,custom_purpose,reason,stock_before_count,counted_quantity,\n    replaces_movement_id,created_by\n  ) values (\n    p_product_id,p_location_id,p_movement_type,p_movement_date,delta,p_total_cost,\n    p_usage_purpose,nullif(btrim(p_custom_purpose),''),nullif(btrim(p_reason),''),baseline,p_counted_quantity,\n    p_replaces_movement_id,actor.user_account_id\n  ) returning movement_id"\nPL/pgSQL function public.save_inventory_movement(uuid,uuid,text,date,numeric,numeric,text,text,text,numeric,uuid,text) line 67 at SQL statement`,
+    schema: 'public',
+    table: 'inventory_movements',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'inventory_movement_cost',
+    file: 'execMain.c',
+    line: '2081',
+    routine: 'ExecConstraints',
+    query: 'select save_inventory_movement($1,$2,$3,private.india_today()+$4::int,$5,$6,$7,$8,$9,$10,$11,$12)',
+    params: [ '554ddf87-168e-4a3b-b24a-c819f938c7f6', '10000000-0000-4000-8000-000000000010', 'purchase_received', -1, 25, null, null, null, null, null, null, null ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:115:11
+✖ purchase allows optional cost; invalid precision, negative or zero quantity and future date fail (14.1114ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== '25.000'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:122:14)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:115:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: '25.000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:125:11
+✖ separate production, cooking and custom uses with decimal quantities (6.3944ms)
+  error: This change would make stock negative on an affected date
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 423,
+    severity: 'ERROR',
+    code: '23514',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function private.assert_inventory_balances(uuid,uuid) line 14 at RAISE\nSQL statement "SELECT private.assert_inventory_balances(p_product_id,p_location_id)"\nPL/pgSQL function public.save_inventory_movement(uuid,uuid,text,date,numeric,numeric,text,text,text,numeric,uuid,text) line 76 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3923',
+    routine: 'exec_stmt_raise',
+    query: 'select save_inventory_movement($1,$2,$3,private.india_today()+$4::int,$5,$6,$7,$8,$9,$10,$11,$12)',
+    params: [ '554ddf87-168e-4a3b-b24a-c819f938c7f6', '10000000-0000-4000-8000-000000000010', 'used', 0, 4.5, null, 'sweet_savoury_production', null, null, null, null, null ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:131:11
+✖ custom purpose is required and disposal subtracts only its quantity (7.5918ms)
+  error: This change would make stock negative on an affected date
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 423,
+    severity: 'ERROR',
+    code: '23514',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function private.assert_inventory_balances(uuid,uuid) line 14 at RAISE\nSQL statement "SELECT private.assert_inventory_balances(p_product_id,p_location_id)"\nPL/pgSQL function public.save_inventory_movement(uuid,uuid,text,date,numeric,numeric,text,text,text,numeric,uuid,text) line 76 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3923',
+    routine: 'exec_stmt_raise',
+    query: 'select save_inventory_movement($1,$2,$3,private.india_today()+$4::int,$5,$6,$7,$8,$9,$10,$11,$12)',
+    params: [ '554ddf87-168e-4a3b-b24a-c819f938c7f6', '10000000-0000-4000-8000-000000000010', 'disposed', 0, 0.5, null, null, null, null, null, null, null ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:136:11
+✖ usage/spoilage cannot exceed stock or create negative past daily balance (20.8756ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== '17.000'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:142:14)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:136:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: '17.000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:157:11
+✖ production receipt takes no cost and does not consume ingredients automatically (9.9537ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== '17.000'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:163:14)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:157:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: '17.000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:166:11
+✖ fixed units cannot change after movements (3.5418ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:168:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:166:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:173:11
+✖ mixed shipment deducts each product exactly once (14.2248ms)
+  error: This change would make stock negative on an affected date
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 385,
+    severity: 'ERROR',
+    code: '23514',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: 'PL/pgSQL function private.assert_inventory_balances(uuid,uuid) line 14 at RAISE\nSQL statement "SELECT private.assert_inventory_balances(product,central_id)"\nPL/pgSQL function public.manage_transfer(text,uuid,text,uuid,uuid,date,date,jsonb,text) line 202 at PERFORM',
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'pl_exec.c',
+    line: '3923',
+    routine: 'exec_stmt_raise',
+    query: "select manage_transfer('create',null,$1,$2,$3,private.india_today()+$4::int,null,$5::jsonb)",
+    params: [ 'dispatch', '10000000-0000-4000-8000-000000000010', '10000000-0000-4000-8000-000000000011', 0, '[{"product_id":"554ddf87-168e-4a3b-b24a-c819f938c7f6","qty_sent":3},{"product_id":"160b85fe-c11c-46b8-94d3-00187434b6a8","qty_sent":8},{"product_id":"7b3c210f-1266-437f-ab9f-7b3d73f469bc","qty_sent":2}]' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:183:11
+✖ one overdrawn line rolls back the entire shipment (11.5412ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== '14.000'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:190:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:183:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: '14.000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:209:11
+✖ other three outlets cannot read or receive another outlet shipment (0.893ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: 'select count(*)::int from transfer_batches where transfer_id=$1',
+    params: [ '' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:264:11
+✖ mixed full/short/zero receipt confirms without central re-deduction (0.3918ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: "select manage_transfer('receive',$1,null,null,null,null,private.india_today(),$2::jsonb)",
+    params: [ '', '[{"product_id":"554ddf87-168e-4a3b-b24a-c819f938c7f6"},{"product_id":"160b85fe-c11c-46b8-94d3-00187434b6a8","received_in_full":false,"actual_qty_received":6,"receipt_notes":"Test short by 2"},{"product_id":"7b3c210f-1266-437f-ab9f-7b3d73f469bc","received_in_full":false,"actual_qty_received":0,"receipt_notes":"Test none arrived"}]' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:271:11
+✖ repeat confirmation is a no-op; changed saved receipt needs admin (0.6986ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: "select manage_transfer('receive',$1,null,null,null,null,private.india_today(),$2::jsonb)",
+    params: [ '', '[{"product_id":"554ddf87-168e-4a3b-b24a-c819f938c7f6"},{"product_id":"160b85fe-c11c-46b8-94d3-00187434b6a8","received_in_full":false,"actual_qty_received":6,"receipt_notes":"Test short by 2"},{"product_id":"7b3c210f-1266-437f-ab9f-7b3d73f469bc","received_in_full":false,"actual_qty_received":0,"receipt_notes":"Test none arrived"}]' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:283:11
+✖ outlet creates independent return without prior-delivery link (7.3899ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '20.000' !== '12.000'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:286:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:283:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '20.000',
+    expected: '12.000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:305:11
+✖ 5 sent, 4 arrived, 1.5 usable, 2.5 disposed: net stock increases 1.5 (6.6749ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '21.500' !== '13.500'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:315:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:305:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '21.500',
+    expected: '13.500',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:319:11
+✖ all-disposal and zero-arrival returns leave available stock unchanged (11.953ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '21.500' !== '13.500'
+  
+      at TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:329:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async TestContext.<anonymous> (D:\J2 Halls\Internal Ops App\ops-app\tests\inventory-transfers.test.ts:319:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '21.500',
+    expected: '13.500',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\inventory-transfers.test.ts:333:11
+✖ admin corrects received dispatch atomically while retaining original (0.9336ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: "select manage_transfer('replace',$1,null,null,null,private.india_today(),private.india_today(),$2::jsonb,'Test sent quantity correction')",
+    params: [ '', '[{"product_id":"554ddf87-168e-4a3b-b24a-c819f938c7f6","qty_sent":3},{"product_id":"160b85fe-c11c-46b8-94d3-00187434b6a8","qty_sent":7,"received_in_full":false,"actual_qty_received":6},{"product_id":"7b3c210f-1266-437f-ab9f-7b3d73f469bc","qty_sent":2,"received_in_full":false,"actual_qty_received":0}]' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:353:11
+✖ admin cannot edit automatic ledger postings separately (0.5813ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: 'select movement_id from inventory_movements where transfer_item_id in(select transfer_item_id from transfer_items where transfer_id=$1) limit 1',
+    params: [ '' ],
+    queryOptions: undefined
+  }
+
+test at tests\inventory-transfers.test.ts:360:11
+✖ voiding a corrected dispatch restores stock; repeated void does not duplicate (0.4616ms)
+  error: invalid input syntax for type uuid: ""
+      at Ie.la (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:22506)
+      at Ie.Qa (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:19876)
+      at Ie.parse (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:4:18520)
+      at _e.Ia (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1788)
+      at <anonymous> (D:\J2 Halls\Internal Ops App\ops-app\node_modules\@electric-sql\pglite\dist\index.cjs:15:1161)
+      at wasm://wasm/0267bb86:wasm-function[10930]:0x5a5ccf
+      at wasm://wasm/0267bb86:wasm-function[3585]:0x27eaeb
+      at wasm://wasm/0267bb86:wasm-function[3627]:0x2869d1
+      at wasm://wasm/0267bb86:wasm-function[3637]:0x286c2d
+      at wasm://wasm/0267bb86:wasm-function[9914]:0x54fd4d {
+    length: 129,
+    severity: 'ERROR',
+    code: '22P02',
+    detail: undefined,
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: "unnamed portal parameter $1 = ''",
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'uuid.c',
+    line: '177',
+    routine: 'string_to_uuid',
+    query: "select manage_transfer('void',$1,p_reason=>'Test void')",
+    params: [ '' ],
+    queryOptions: undefined
+  }
