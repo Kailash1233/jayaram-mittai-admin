@@ -35,6 +35,16 @@ export const requireContext = cache(async (): Promise<Context> => {
     throw new Error(
       'Unable to load your account. Check that all three schema migrations are installed.',
     );
+  // if (error) {
+  //   console.error('ACCOUNT LOAD ERROR:', {
+  //     message: error.message,
+  //     details: error.details,
+  //     hint: error.hint,
+  //     code: error.code,
+  //   });
+
+  //   throw new Error(`Unable to load your account: ${error.message} (${error.code})`);
+  // }
   if (!data) redirect('/access-pending');
   const account = data as Account;
   const { data: locations, error: locationsError } = await db.rpc('get_transfer_locations');

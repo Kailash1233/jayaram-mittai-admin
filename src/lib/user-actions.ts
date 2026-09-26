@@ -32,6 +32,9 @@ export async function createAccount(input: unknown): Promise<ActionResult> {
           'Account creation needs the server-only provisioning key. Existing accounts can still use the app.',
       };
     const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, secret, {
+      db: {
+        schema: 'InternalOperations',
+      },
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data, error } = await db.auth.admin.createUser({
@@ -45,15 +48,13 @@ export async function createAccount(input: unknown): Promise<ActionResult> {
         message:
           'Unable to create this login. Check whether the email is already registered and meets your password policy.',
       };
-    const { error: profileError } = await db
-      .from('user_accounts')
-      .insert({
-        auth_user_id: data.user.id,
-        display_name: v.display_name,
-        user_role: v.user_role,
-        location_id: ['owner', 'manager'].includes(v.user_role) ? null : v.location_id,
-        is_active: true,
-      });
+    const { error: profileError } = await db.from('user_accounts').insert({
+      auth_user_id: data.user.id,
+      display_name: v.display_name,
+      user_role: v.user_role,
+      location_id: ['owner', 'manager'].includes(v.user_role) ? null : v.location_id,
+      is_active: true,
+    });
     if (profileError) {
       const cleanup = await db.auth.admin.deleteUser(data.user.id);
       return {
